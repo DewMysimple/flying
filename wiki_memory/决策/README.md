@@ -28,6 +28,7 @@ supersedes: null
 
 - [[决策/ADR-001-multi-project-host|ADR-001：统一宿主与多工程目录]]
 - [[决策/ADR-002-git-submit-push|ADR-002：完整改动必须检查、提交并推送]]
-- [[决策/ADR-003-fixed-dev-port|ADR-003：固定开发服务器端口]]
+- [[决策/ADR-003-fixed-dev-port|ADR-003：固定开发服务器端口]]（superseded）
 - [[决策/ADR-004-adaptive-workspace-theme|ADR-004：工程主题令牌驱动宿主顶栏]]
 - [[决策/ADR-005-sidebar-project-directory|ADR-005：左侧目录式工程导航]]
+- [[决策/ADR-006-parallel-dev-servers|ADR-006：允许并行开发服务器]]

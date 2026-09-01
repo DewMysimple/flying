@@ -1,12 +1,13 @@
 ---
 type: decision
-status: active
+status: superseded
 kind: architecture
 importance: high
-updated: 2026-09-01
+updated: 2026-09-02
 topic: fixed-dev-port
 source_logs:
   - "[[日志/2026-09-01-固定开发服务器端口]]"
+  - "[[日志/2026-09-02-并行开发服务器端口]]"
 supersedes: null
 ---
 
@@ -18,12 +19,12 @@ supersedes: null
 
 ## 选择
 
-飞鸟实验室的开发和预览服务器统一监听 `127.0.0.1:5189`，并启用 `strictPort: true`。配置集中在根目录 `vite.config.js`，npm 脚本只调用 `vite` 和 `vite preview`。
+飞鸟实验室的开发和预览服务器曾统一监听 `127.0.0.1:5189`，并启用 `strictPort: true`。配置集中在根目录 `vite.config.js`，npm 脚本只调用 `vite` 和 `vite preview`。
 
 ## 理由与影响
 
-固定端口让启动地址稳定，端口被占用时立即暴露问题，不会静默连接到其他工程。代价是启动前需要释放 `5189`，或由用户明确处理端口占用，而不是让 Vite 自动选择新端口。
+固定端口让启动地址稳定，端口被占用时立即暴露问题，不会静默连接到其他工程。该方案的代价是无法并行启动多个开发服务，现由 ADR-006 替代。
 
 ## 验证方式
 
-从仓库根目录执行 `npm run dev`，确认仅监听 `127.0.0.1:5189`；访问 `http://127.0.0.1:5189/?project=flying-dandelion` 应显示飞鸟蒲公英宿主。来源见 [[日志/2026-09-01-固定开发服务器端口|固定端口日志]]。
+历史验证：从仓库根目录执行 `npm run dev`，确认仅监听 `127.0.0.1:5189`；访问 `http://127.0.0.1:5189/?project=flying-dandelion` 应显示飞鸟蒲公英宿主。来源见 [[日志/2026-09-01-固定开发服务器端口|固定端口日志]]。
