@@ -4,20 +4,38 @@ const modules = import.meta.glob('../projects/*/project.js', { eager: true });
 const projects = Object.values(modules)
   .map((module) => module.manifest ?? module.default)
   .filter((project) => project && typeof project.slug === 'string' && typeof project.mount === 'function')
-  .sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
+  .sort((a, b) => (a.title ?? a.slug).localeCompare(b.title ?? b.slug, 'zh-CN'));
 
 const DEFAULT_THEME = {
   surface: '#e9e4d8',
   ink: '#26352d',
   accent: '#9f6479',
 };
+const PROJECT_ICONS = {
+  bird: {
+    paths: [
+      'M3.5 14.5c2.5-4.2 5.8-6.3 9.8-6.3 2.7 0 4.9 1.2 7.2 3.5-2.6-.3-4.8.3-6.5 1.8-1.7 1.5-3.9 2.2-6.5 2.2-1.7 0-3-.4-4-.9Z',
+      'M11.1 8.5c.8-1.7 1.9-2.7 3.3-3.2M17.2 12.2l3-1.7',
+    ],
+  },
+  lotus: {
+    paths: [
+      'M12 19.5c-4.4 0-7.8-1.2-9.5-3.5 2.8-.6 5.1-.1 7 1.3-1.7-2.2-2.2-4.6-1.5-7.2 2 1.1 3.3 2.9 4 5.4.7-2.5 2-4.3 4-5.4.7 2.6.2 5-1.5 7.2 1.9-1.4 4.2-1.9 7-1.3-1.7 2.3-5.1 3.5-9.5 3.5Z',
+      'M12 15.5V6.2M8.5 19.2h7',
+    ],
+  },
+};
+const SIDEBAR_STORAGE_KEY = 'flying-lab.sidebar-collapsed';
+const SIDEBAR_WIDTHS = {
+  expanded: '248px',
+  collapsed: '76px',
+};
 
 const host = document.querySelector('#project-host');
-const switcher = document.querySelector('.project-switcher');
-const trigger = document.querySelector('#project-trigger');
-const triggerLabel = document.querySelector('#project-trigger-label');
-const menu = document.querySelector('#project-menu-list');
-const workspaceTitle = document.querySelector('[data-role="workspace-title"]');
+const sidebar = document.querySelector('#workspace-sidebar');
+const sidebarToggle = document.querySelector('#sidebar-toggle');
+const sidebarToggleIcon = document.querySelector('[data-role="sidebar-toggle-icon"]');
+const directoryList = document.querySelector('#project-directory-list');
 const status = document.querySelector('#workspace-status');
 const loading = document.querySelector('#workspace-loading');
 const error = document.querySelector('#workspace-error');
@@ -25,9 +43,40 @@ const errorMessage = document.querySelector('#workspace-error-message');
 const themeColorMeta = document.querySelector('meta[name="theme-color"]');
 
 let currentDestroy = null;
-let currentProject = null;
-let menuOpen = false;
-let focusedIndex = 0;
+
+function projectTitle(project) {
+  return typeof project?.title === 'string' && project.title.trim() ? project.title : project.slug;
+}
+
+function projectTheme(project) {
+  return { ...DEFAULT_THEME, ...(project?.theme ?? {}) };
+}
+
+function readSidebarCollapsed() {
+  try {
+    return window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function setSidebarCollapsed(collapsed, { persist = true } = {}) {
+  const isCollapsed = Boolean(collapsed);
+  sidebar.classList.toggle('is-collapsed', isCollapsed);
+  sidebar.dataset.collapsed = String(isCollapsed);
+  document.documentElement.style.setProperty('--workspace-sidebar-width', isCollapsed ? SIDEBAR_WIDTHS.collapsed : SIDEBAR_WIDTHS.expanded);
+  sidebarToggle.setAttribute('aria-expanded', String(!isCollapsed));
+  sidebarToggle.setAttribute('aria-label', isCollapsed ? '展开工程目录' : '收起工程目录');
+  sidebarToggleIcon.textContent = isCollapsed ? '›' : '‹';
+
+  if (persist) {
+    try {
+      window.localStorage.setItem(SIDEBAR_STORAGE_KEY, String(isCollapsed));
+    } catch {
+      // Private browsing and blocked storage should not prevent navigation.
+    }
+  }
+}
 
 function setUrlProject(slug) {
   const url = new URL(window.location.href);
@@ -41,7 +90,7 @@ function setStatus(message = '') {
 }
 
 function applyTheme(project) {
-  const theme = { ...DEFAULT_THEME, ...(project?.theme ?? {}) };
+  const theme = projectTheme(project);
   const rootStyle = document.documentElement.style;
 
   ['surface', 'ink', 'accent'].forEach((key) => {
@@ -54,27 +103,58 @@ function applyTheme(project) {
 }
 
 function updateCurrentProject(project) {
-  currentProject = project;
-  workspaceTitle.textContent = project.title;
-  triggerLabel.textContent = project.title;
-  trigger.setAttribute('aria-label', `切换工程，当前为${project.title}`);
+  directoryList.querySelectorAll('[data-project-option]').forEach((option) => {
+    const isCurrent = option.dataset.projectOption === project.slug;
+    option.classList.toggle('is-current', isCurrent);
+    option.toggleAttribute('aria-current', isCurrent);
+    option.setAttribute('aria-label', `${isCurrent ? '当前工程' : '打开工程'}：${option.dataset.projectTitle}`);
+  });
+}
 
-  menu.querySelectorAll('[data-project-option]').forEach((option) => {
-    const isSelected = option.dataset.projectOption === project.slug;
-    option.setAttribute('aria-selected', String(isSelected));
-    option.tabIndex = isSelected ? 0 : -1;
+function setProjectOptionsDisabled(disabled) {
+  directoryList.querySelectorAll('[data-project-option]').forEach((option) => {
+    option.disabled = disabled;
   });
 }
 
 function setLoading(isLoading) {
   loading.hidden = !isLoading;
-  trigger.disabled = isLoading || projects.length === 0;
-  trigger.setAttribute('aria-busy', String(isLoading));
+  setProjectOptionsDisabled(isLoading || projects.length === 0);
+  sidebarToggle.disabled = projects.length === 0;
 
   if (isLoading) {
     setStatus('载入中');
-    closeMenu();
   }
+}
+
+function createProjectIcon(project, title) {
+  const icon = document.createElement('span');
+  const definition = PROJECT_ICONS[project.icon];
+
+  icon.className = 'project-option-icon';
+  icon.setAttribute('aria-hidden', 'true');
+
+  if (!definition) {
+    icon.classList.add('project-option-initial');
+    icon.textContent = title.trim().charAt(0) || '?';
+    return icon;
+  }
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.7');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+
+  definition.paths.forEach((pathData) => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', pathData);
+    svg.append(path);
+  });
+  icon.append(svg);
+  return icon;
 }
 
 function showError(message) {
@@ -87,56 +167,11 @@ function hideError() {
   error.hidden = true;
 }
 
-function getOptions() {
-  return [...menu.querySelectorAll('[data-project-option]')];
-}
-
-function updateFocusedOption(index) {
-  const options = getOptions();
-  if (!options.length) return;
-
-  focusedIndex = (index + options.length) % options.length;
-  options.forEach((option, optionIndex) => {
-    option.classList.toggle('is-focused', optionIndex === focusedIndex);
-  });
-  options[focusedIndex].focus();
-}
-
-function openMenu({ focus = true } = {}) {
-  if (trigger.disabled || !projects.length) return;
-
-  menuOpen = true;
-  menu.hidden = false;
-  switcher.classList.add('is-open');
-  trigger.setAttribute('aria-expanded', 'true');
-
-  const selectedIndex = projects.findIndex((project) => project.slug === currentProject?.slug);
-  focusedIndex = selectedIndex >= 0 ? selectedIndex : 0;
-  if (focus) updateFocusedOption(focusedIndex);
-}
-
-function closeMenu({ restoreFocus = false } = {}) {
-  if (!menuOpen && menu.hidden) return;
-
-  menuOpen = false;
-  menu.hidden = true;
-  switcher.classList.remove('is-open');
-  trigger.setAttribute('aria-expanded', 'false');
-  menu.querySelectorAll('.is-focused').forEach((option) => option.classList.remove('is-focused'));
-
-  if (restoreFocus && !trigger.disabled) trigger.focus();
-}
-
-function toggleMenu() {
-  if (menuOpen) closeMenu();
-  else openMenu();
-}
-
 async function loadProject(slug, { updateUrl = true } = {}) {
   const project = projects.find((candidate) => candidate.slug === slug) ?? projects[0];
   if (!project) {
     showError('没有找到可用的 p5.js 工程。');
-    trigger.disabled = true;
+    sidebarToggle.disabled = true;
     return;
   }
 
@@ -153,12 +188,12 @@ async function loadProject(slug, { updateUrl = true } = {}) {
   currentDestroy = null;
   host.replaceChildren();
   updateCurrentProject(project);
-  setStatus(`载入 ${project.title}`);
+  setStatus(`载入 ${projectTitle(project)}`);
 
   try {
     const destroy = await project.mount(host);
     currentDestroy = typeof destroy === 'function' ? destroy : () => {};
-    document.title = `${project.title} | 飞鸟实验室`;
+    document.title = `${projectTitle(project)} | 飞鸟实验室`;
     setStatus('');
   } catch (loadError) {
     host.replaceChildren();
@@ -168,67 +203,43 @@ async function loadProject(slug, { updateUrl = true } = {}) {
   }
 }
 
-projects.forEach((project) => {
+function createProjectOption(project) {
+  const title = projectTitle(project);
   const option = document.createElement('button');
+  const mark = document.createElement('span');
+  const copy = document.createElement('span');
+  const titleNode = document.createElement('span');
+
   option.type = 'button';
   option.className = 'project-option';
-  option.setAttribute('role', 'option');
-  option.setAttribute('aria-selected', 'false');
-  option.tabIndex = -1;
   option.dataset.projectOption = project.slug;
-  option.textContent = project.title;
-  option.addEventListener('click', () => {
-    closeMenu();
-    loadProject(project.slug);
+  option.dataset.projectTitle = title;
+  option.title = title;
+  option.setAttribute('aria-label', `打开工程：${title}`);
+  option.style.setProperty('--project-accent', projectTheme(project).accent);
+
+  mark.className = 'project-option-mark';
+  mark.append(createProjectIcon(project, title));
+
+  copy.className = 'project-option-copy';
+  titleNode.className = 'project-option-title';
+  titleNode.textContent = title;
+  copy.append(titleNode);
+
+  option.append(mark, copy);
+  option.addEventListener('click', () => loadProject(project.slug));
+  option.addEventListener('keydown', (event) => {
+    if (event.key !== 'Enter' && event.key !== ' ') return;
+    event.preventDefault();
+    if (!option.disabled) loadProject(project.slug);
   });
-  menu.append(option);
-});
+  directoryList.append(option);
+}
 
-trigger.addEventListener('click', toggleMenu);
-trigger.addEventListener('keydown', (event) => {
-  if (event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    openMenu();
-  } else if (event.key === 'ArrowUp') {
-    event.preventDefault();
-    openMenu();
-    updateFocusedOption(focusedIndex - 1);
-  } else if (event.key === 'Escape') {
-    closeMenu();
-  }
-});
-
-menu.addEventListener('keydown', (event) => {
-  const options = getOptions();
-  if (!options.length) return;
-
-  if (event.key === 'ArrowDown') {
-    event.preventDefault();
-    updateFocusedOption(focusedIndex + 1);
-  } else if (event.key === 'ArrowUp') {
-    event.preventDefault();
-    updateFocusedOption(focusedIndex - 1);
-  } else if (event.key === 'Home') {
-    event.preventDefault();
-    updateFocusedOption(0);
-  } else if (event.key === 'End') {
-    event.preventDefault();
-    updateFocusedOption(options.length - 1);
-  } else if (event.key === 'Enter' || event.key === ' ') {
-    event.preventDefault();
-    const project = projects[focusedIndex];
-    closeMenu();
-    loadProject(project.slug);
-  } else if (event.key === 'Escape') {
-    event.preventDefault();
-    closeMenu({ restoreFocus: true });
-  } else if (event.key === 'Tab') {
-    closeMenu();
-  }
-});
-
-document.addEventListener('pointerdown', (event) => {
-  if (menuOpen && !switcher.contains(event.target)) closeMenu();
+projects.forEach(createProjectOption);
+setSidebarCollapsed(readSidebarCollapsed(), { persist: false });
+sidebarToggle.addEventListener('click', () => {
+  setSidebarCollapsed(!sidebar.classList.contains('is-collapsed'));
 });
 
 window.addEventListener('popstate', () => {

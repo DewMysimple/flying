@@ -37,7 +37,7 @@
 
 .lotus-hint {
   position: fixed;
-  left: 28px;
+  left: calc(var(--workspace-sidebar-width, 0px) + 28px);
   bottom: 26px;
   z-index: 2;
   display: grid;

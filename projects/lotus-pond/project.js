@@ -3,6 +3,7 @@ import { mount } from './sketch.js';
 export const manifest = {
   slug: 'lotus-pond',
   title: '莲花小池',
+  icon: 'lotus',
   mount,
   theme: {
     surface: '#f5f0e3',

@@ -55,7 +55,7 @@ button {
 .masthead {
   position: fixed;
   top: clamp(24px, 5vw, 64px);
-  left: clamp(22px, 5.5vw, 84px);
+  left: calc(var(--workspace-sidebar-width, 0px) + clamp(22px, 5.5vw, 84px));
   z-index: 2;
   width: min(360px, 35vw);
   pointer-events: none;
@@ -310,7 +310,7 @@ button:focus-visible {
 
 .footer-note {
   position: fixed;
-  left: clamp(22px, 5.5vw, 84px);
+  left: calc(var(--workspace-sidebar-width, 0px) + clamp(22px, 5.5vw, 84px));
   bottom: clamp(22px, 4vw, 52px);
   z-index: 2;
   display: flex;

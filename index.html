@@ -11,31 +11,34 @@
     <main id="workspace-app">
       <div id="project-host" aria-live="polite"></div>
 
-      <header class="workspace-topbar">
-        <a class="workspace-brand" href="./" aria-label="返回飞鸟实验室首页">
-          <span class="brand-mark" aria-hidden="true">✳</span>
-          <span data-role="workspace-title">飞鸟实验室</span>
-        </a>
-        <div class="project-switcher">
-          <span class="project-switcher-label" id="project-switcher-label">切换工程</span>
-          <div class="project-menu">
-            <button
-              id="project-trigger"
-              class="project-trigger"
-              type="button"
-              aria-haspopup="listbox"
-              aria-expanded="false"
-              aria-controls="project-menu-list"
-              aria-labelledby="project-switcher-label project-trigger-label"
-            >
-              <span id="project-trigger-label">载入中</span>
-              <span class="project-chevron" aria-hidden="true">⌄</span>
-            </button>
-            <div id="project-menu-list" class="project-menu-list" role="listbox" aria-labelledby="project-switcher-label" hidden></div>
-          </div>
+      <aside id="workspace-sidebar" class="workspace-sidebar" data-collapsed="false">
+        <div class="sidebar-header">
+          <a class="workspace-brand" href="./" aria-label="返回飞鸟实验室首页">
+            <span class="brand-mark" aria-hidden="true">✳</span>
+            <span class="workspace-brand-copy">
+              <strong data-role="workspace-title">飞鸟实验室</strong>
+              <small>P5 GENERATIVE LAB</small>
+            </span>
+          </a>
+          <button
+            id="sidebar-toggle"
+            class="sidebar-toggle"
+            type="button"
+            aria-expanded="true"
+            aria-controls="workspace-sidebar-content"
+            aria-label="收起工程目录"
+          >
+            <span data-role="sidebar-toggle-icon" aria-hidden="true">‹</span>
+          </button>
         </div>
-        <output id="workspace-status" class="workspace-status" aria-live="polite" hidden></output>
-      </header>
+        <div id="workspace-sidebar-content" class="workspace-sidebar-content">
+          <nav id="project-directory" class="project-directory" aria-label="工程目录">
+            <p class="directory-label">PROJECT DIRECTORY</p>
+            <div id="project-directory-list" class="project-directory-list"></div>
+          </nav>
+          <output id="workspace-status" class="workspace-status" aria-live="polite" hidden></output>
+        </div>
+      </aside>
 
       <div id="workspace-loading" class="workspace-feedback" role="status" aria-live="polite">
         <span class="feedback-spinner" aria-hidden="true"></span>
