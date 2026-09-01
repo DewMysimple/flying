@@ -1,0 +1,19 @@
+{
+  "name": "flying-bird-dandelion",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check:memory": "python wiki_memory/工具/memory_lint.py check",
+    "index:memory": "python wiki_memory/工具/memory_lint.py index"
+  },
+  "dependencies": {
+    "p5": "^1.11.10"
+  },
+  "devDependencies": {
+    "vite": "^7.1.3"
+  }
+}

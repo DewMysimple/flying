@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#244f92" />
+    <meta name="description" content="可在同一画布中切换的 p5.js 生成艺术工作区。" />
+    <title>飞鸟实验室</title>
+  </head>
+  <body>
+    <main id="workspace-app">
+      <div id="project-host" aria-live="polite"></div>
+
+      <header class="workspace-topbar">
+        <a class="workspace-brand" href="./" aria-label="返回飞鸟实验室首页">
+          <span class="brand-mark" aria-hidden="true">✳</span>
+          <span>飞鸟实验室</span>
+        </a>
+        <div class="project-switcher">
+          <label for="project-select">当前工程</label>
+          <select id="project-select" aria-label="切换 p5.js 工程"></select>
+        </div>
+        <span id="workspace-status" class="workspace-status">准备就绪</span>
+      </header>
+
+      <div id="workspace-loading" class="workspace-feedback" role="status" aria-live="polite">
+        <span class="feedback-spinner" aria-hidden="true"></span>
+        <span>正在载入工程</span>
+      </div>
+
+      <div id="workspace-error" class="workspace-feedback workspace-error" role="alert" hidden>
+        <strong>工程载入失败</strong>
+        <span id="workspace-error-message">请重新选择一个工程。</span>
+      </div>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
