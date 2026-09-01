@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#244f92" />
+    <meta name="theme-color" content="#e9e4d8" />
     <meta name="description" content="可在同一画布中切换的 p5.js 生成艺术工作区。" />
     <title>飞鸟实验室</title>
   </head>
@@ -14,13 +14,27 @@
       <header class="workspace-topbar">
         <a class="workspace-brand" href="./" aria-label="返回飞鸟实验室首页">
           <span class="brand-mark" aria-hidden="true">✳</span>
-          <span>飞鸟实验室</span>
+          <span data-role="workspace-title">飞鸟实验室</span>
         </a>
         <div class="project-switcher">
-          <label for="project-select">当前工程</label>
-          <select id="project-select" aria-label="切换 p5.js 工程"></select>
+          <span class="project-switcher-label" id="project-switcher-label">切换工程</span>
+          <div class="project-menu">
+            <button
+              id="project-trigger"
+              class="project-trigger"
+              type="button"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-controls="project-menu-list"
+              aria-labelledby="project-switcher-label project-trigger-label"
+            >
+              <span id="project-trigger-label">载入中</span>
+              <span class="project-chevron" aria-hidden="true">⌄</span>
+            </button>
+            <div id="project-menu-list" class="project-menu-list" role="listbox" aria-labelledby="project-switcher-label" hidden></div>
+          </div>
         </div>
-        <span id="workspace-status" class="workspace-status">准备就绪</span>
+        <output id="workspace-status" class="workspace-status" aria-live="polite" hidden></output>
       </header>
 
       <div id="workspace-loading" class="workspace-feedback" role="status" aria-live="polite">

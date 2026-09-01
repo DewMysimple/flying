@@ -4,4 +4,9 @@ export const manifest = {
   slug: 'flying-dandelion',
   title: '飞鸟蒲公英',
   mount,
+  theme: {
+    surface: '#3168b5',
+    ink: '#d2e9ff',
+    accent: '#f49b9b',
+  },
 };

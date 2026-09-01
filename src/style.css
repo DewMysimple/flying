@@ -1,9 +1,10 @@
 :root {
-  color-scheme: dark;
+  color-scheme: light;
   font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
-  color: #d2e9ff;
-  background: #3168b5;
   font-synthesis: none;
+  --workspace-surface: #e9e4d8;
+  --workspace-ink: #26352d;
+  --workspace-accent: #9f6479;
 }
 
 * {
@@ -16,13 +17,16 @@ body {
   min-width: 320px;
   min-height: 100%;
   overflow: hidden;
-  background: #3168b5;
+  background: var(--workspace-surface);
 }
 
 button,
-input,
-select {
+output {
   font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
 }
 
 #workspace-app,
@@ -37,30 +41,36 @@ select {
 
 .workspace-topbar {
   position: fixed;
-  top: 16px;
+  top: 14px;
   left: 18px;
   right: 18px;
   z-index: 20;
   display: flex;
   align-items: center;
-  min-height: 52px;
-  gap: 22px;
-  padding: 8px 14px;
-  border: 1px solid rgba(210, 233, 255, 0.24);
-  border-radius: 13px;
-  background: rgba(24, 73, 145, 0.78);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 18px 50px rgba(17, 57, 119, 0.22);
-  backdrop-filter: blur(20px) saturate(125%);
-  -webkit-backdrop-filter: blur(20px) saturate(125%);
+  min-height: 48px;
+  gap: 18px;
+  padding: 4px 8px 4px 11px;
+  border: 1px solid color-mix(in srgb, var(--workspace-ink) 18%, transparent);
+  border-radius: 15px;
+  background: var(--workspace-surface);
+  background: color-mix(in srgb, var(--workspace-surface) 88%, transparent);
+  color: var(--workspace-ink);
+  box-shadow: 0 15px 44px rgba(18, 29, 23, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  box-shadow: 0 15px 44px color-mix(in srgb, var(--workspace-ink) 18%, transparent), inset 0 1px 0 color-mix(in srgb, var(--workspace-ink) 8%, transparent);
+  backdrop-filter: blur(20px) saturate(118%);
+  -webkit-backdrop-filter: blur(20px) saturate(118%);
+  transition-property: background-color, color, border-color, box-shadow;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
 }
 
 .workspace-brand {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
   min-width: max-content;
-  color: #d2e9ff;
-  font-size: 14px;
+  gap: 9px;
+  color: inherit;
+  font-size: 13px;
   font-weight: 650;
   letter-spacing: 0.02em;
   text-decoration: none;
@@ -68,58 +78,184 @@ select {
 
 .brand-mark {
   display: grid;
-  width: 25px;
-  height: 25px;
+  width: 27px;
+  height: 27px;
   place-items: center;
-  border: 1px solid rgba(210, 233, 255, 0.48);
-  border-radius: 8px;
-  color: #f49b9b;
+  border: 1px solid color-mix(in srgb, var(--workspace-ink) 34%, transparent);
+  border-radius: 9px;
+  color: var(--workspace-accent);
   font-size: 16px;
   line-height: 1;
+  transition-property: border-color, color, transform;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
+}
+
+.workspace-brand:hover .brand-mark {
+  border-color: var(--workspace-accent);
+  transform: rotate(12deg);
 }
 
 .project-switcher {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   min-width: 0;
   margin-left: auto;
 }
 
-.project-switcher label,
-.workspace-status {
-  color: rgba(210, 233, 255, 0.58);
+.project-switcher-label {
+  color: color-mix(in srgb, var(--workspace-ink) 56%, transparent);
   font-family: Consolas, "SFMono-Regular", monospace;
-  font-size: 11px;
-  letter-spacing: 0.04em;
+  font-size: 10px;
+  letter-spacing: 0.08em;
   white-space: nowrap;
 }
 
-.project-switcher select {
-  min-width: 174px;
-  max-width: 34vw;
-  padding: 9px 29px 9px 12px;
-  border: 1px solid rgba(210, 233, 255, 0.28);
-  border-radius: 9px;
-  outline: none;
-  background: rgba(210, 233, 255, 0.09);
-  color: #d2e9ff;
+.project-menu {
+  position: relative;
+}
+
+.project-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 162px;
+  min-height: 40px;
+  gap: 20px;
+  padding: 0 11px 0 13px;
+  border: 1px solid color-mix(in srgb, var(--workspace-ink) 27%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--workspace-surface) 74%, var(--workspace-ink) 6%);
+  color: var(--workspace-ink);
+  font-size: 12px;
+  font-weight: 630;
+  line-height: 1;
+  text-align: left;
   cursor: pointer;
+  transition-property: background-color, border-color, color, transform, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
 }
 
-.project-switcher select:focus-visible {
-  outline: 2px solid #d2e9ff;
-  outline-offset: 2px;
+.project-trigger:hover {
+  border-color: var(--workspace-accent);
+  background: color-mix(in srgb, var(--workspace-accent) 10%, var(--workspace-surface));
 }
 
-.project-switcher select:disabled {
+.project-trigger:active {
+  transform: scale(0.96);
+}
+
+.project-trigger:disabled {
   cursor: wait;
   opacity: 0.64;
 }
 
+.project-chevron {
+  display: inline-block;
+  color: color-mix(in srgb, var(--workspace-ink) 66%, transparent);
+  font-size: 17px;
+  font-weight: 400;
+  line-height: 0.7;
+  transform: translateY(-1px);
+  transition-property: color, transform;
+  transition-duration: 150ms;
+  transition-timing-function: ease-out;
+}
+
+.project-switcher.is-open .project-chevron {
+  color: var(--workspace-accent);
+  transform: translateY(1px) rotate(180deg);
+}
+
+.project-menu-list {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  min-width: 100%;
+  width: max-content;
+  max-width: min(280px, calc(100vw - 32px));
+  max-height: min(320px, calc(100dvh - 110px));
+  gap: 3px;
+  padding: 6px;
+  overflow-y: auto;
+  border: 1px solid color-mix(in srgb, var(--workspace-ink) 19%, transparent);
+  border-radius: 14px;
+  background: var(--workspace-surface);
+  background: color-mix(in srgb, var(--workspace-surface) 96%, transparent);
+  box-shadow: 0 17px 44px rgba(18, 29, 23, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  box-shadow: 0 17px 44px color-mix(in srgb, var(--workspace-ink) 21%, transparent), inset 0 1px 0 color-mix(in srgb, var(--workspace-ink) 7%, transparent);
+  backdrop-filter: blur(18px) saturate(118%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--workspace-ink) 26%, transparent) transparent;
+}
+
+.project-menu-list[hidden] {
+  display: none !important;
+}
+
+.project-option {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-width: 100%;
+  min-height: 40px;
+  padding: 0 30px 0 11px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: color-mix(in srgb, var(--workspace-ink) 82%, transparent);
+  font-size: 12px;
+  font-weight: 560;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition-property: background-color, color, transform;
+  transition-duration: 120ms;
+  transition-timing-function: ease-out;
+}
+
+.project-option:hover,
+.project-option.is-focused {
+  background: color-mix(in srgb, var(--workspace-accent) 11%, transparent);
+  color: var(--workspace-ink);
+}
+
+.project-option[aria-selected="true"] {
+  background: color-mix(in srgb, var(--workspace-accent) 16%, transparent);
+  color: var(--workspace-ink);
+  font-weight: 680;
+}
+
+.project-option[aria-selected="true"]::after {
+  position: absolute;
+  right: 12px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--workspace-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--workspace-accent) 17%, transparent);
+  content: "";
+}
+
 .workspace-status {
-  min-width: 84px;
+  min-width: 52px;
+  color: var(--workspace-accent);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 10px;
+  letter-spacing: 0.04em;
   text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.workspace-status[hidden] {
+  display: none !important;
 }
 
 .workspace-feedback {
@@ -131,7 +267,7 @@ select {
   align-items: center;
   gap: 10px;
   transform: translate(-50%, -50%);
-  color: #d2e9ff;
+  color: var(--workspace-ink);
   font-size: 13px;
   letter-spacing: 0.08em;
   pointer-events: none;
@@ -146,9 +282,12 @@ select {
   gap: 8px;
   max-width: min(380px, calc(100vw - 40px));
   padding: 20px 22px;
-  border: 1px solid rgba(244, 155, 155, 0.5);
-  border-radius: 12px;
-  background: rgba(105, 45, 90, 0.84);
+  border: 1px solid color-mix(in srgb, var(--workspace-accent) 52%, transparent);
+  border-radius: 14px;
+  background: var(--workspace-surface);
+  background: color-mix(in srgb, var(--workspace-surface) 88%, var(--workspace-accent) 12%);
+  box-shadow: 0 17px 44px rgba(18, 29, 23, 0.15);
+  box-shadow: 0 17px 44px color-mix(in srgb, var(--workspace-ink) 18%, transparent);
   text-align: center;
   letter-spacing: 0;
   pointer-events: auto;
@@ -159,7 +298,7 @@ select {
 }
 
 .workspace-error span {
-  color: rgba(255, 225, 216, 0.8);
+  color: color-mix(in srgb, var(--workspace-ink) 72%, transparent);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -167,10 +306,17 @@ select {
 .feedback-spinner {
   width: 8px;
   height: 8px;
-  border: 1px solid rgba(210, 233, 255, 0.35);
-  border-top-color: #d2e9ff;
+  border: 1px solid color-mix(in srgb, var(--workspace-accent) 32%, transparent);
+  border-top-color: var(--workspace-accent);
   border-radius: 50%;
   animation: workspace-spin 700ms linear infinite;
+}
+
+.project-trigger:focus-visible,
+.project-option:focus-visible,
+.workspace-brand:focus-visible {
+  outline: 2px solid var(--workspace-accent);
+  outline-offset: 3px;
 }
 
 @keyframes workspace-spin {
@@ -181,11 +327,11 @@ select {
 
 @media (max-width: 760px) {
   .workspace-topbar {
-    top: 12px;
-    left: 12px;
-    right: 12px;
+    top: 10px;
+    left: 10px;
+    right: 10px;
     gap: 10px;
-    padding: 7px 9px;
+    padding: 4px 6px 4px 8px;
   }
 
   .workspace-brand {
@@ -193,9 +339,9 @@ select {
   }
 
   .brand-mark {
-    width: 22px;
-    height: 22px;
-    border-radius: 7px;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
     font-size: 14px;
   }
 
@@ -203,28 +349,37 @@ select {
     gap: 6px;
   }
 
-  .project-switcher label,
-  .workspace-status {
+  .project-switcher-label {
     display: none;
   }
 
-  .project-switcher select {
-    min-width: 128px;
-    max-width: 45vw;
-    padding: 8px 25px 8px 9px;
-    font-size: 12px;
+  .project-trigger {
+    min-width: 132px;
+    min-height: 40px;
+    padding-left: 10px;
+    font-size: 11px;
+  }
+
+  .project-menu-list {
+    right: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .feedback-spinner {
-    animation: none;
+  .workspace-topbar *,
+  .workspace-topbar *::before,
+  .workspace-topbar *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
 @media (prefers-reduced-transparency: reduce) {
-  .workspace-topbar {
-    background: #245a9f;
+  .workspace-topbar,
+  .project-menu-list,
+  .workspace-error {
+    background: var(--workspace-surface);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }
