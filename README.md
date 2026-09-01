@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-打开终端显示的本地地址。也可以直接访问 `/?project=flying-dandelion`，刷新后会按 URL 恢复工程。
+打开 `http://127.0.0.1:5189/`。也可以直接访问 `http://127.0.0.1:5189/?project=flying-dandelion`，刷新后会按 URL 恢复工程。端口已固定，若被占用会直接报错，不会自动切换到其他端口。Windows 下也可运行根目录的 `runStart.cmd`。
 
 ## 工程结构
 
@@ -22,6 +22,7 @@ projects/<slug>/            # 独立 p5.js 工程
   sketch.js                # 工程逻辑
   style.css                # 工程专属样式
 wiki_memory/               # 工程记忆与 lint/index 工具
+source/                     # 参考资料与未来工程素材
 ```
 
 新增工程时，只需创建新的 `projects/<slug>/project.js` 并导出统一生命周期接口。工程不得依赖其他工程的全局变量或 DOM。

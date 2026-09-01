@@ -15,6 +15,7 @@ supersedes: null
 
 | 时间 | 类型 | 目标 | 状态 | 主题 | 日志 |
 | --- | --- | --- | --- | --- | --- |
+| 2026-09-01 | maintenance | 解决执行 `npm run dev` 后因端口自动递增或打开旧端口而误连其他工程的问题。 | archived | fixed-dev-port | [[日志/2026-09-01-固定开发服务器端口.md|固定开发服务器端口]] |
 | 2026-09-01 | maintenance | 将飞鸟蒲公英整理为可扩展的多 p5.js 工程仓库，建立工程记忆，并准备推送到 `origin/main`。 | archived | initialize-multi-project-workspace | [[日志/2026-09-01-初始化多工程工作区.md|初始化多工程工作区]] |
 
 ## 使用方式

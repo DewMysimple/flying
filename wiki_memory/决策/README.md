@@ -28,3 +28,4 @@ supersedes: null
 
 - [[决策/ADR-001-multi-project-host|ADR-001：统一宿主与多工程目录]]
 - [[决策/ADR-002-git-submit-push|ADR-002：完整改动必须检查、提交并推送]]
+- [[决策/ADR-003-fixed-dev-port|ADR-003：固定开发服务器端口]]
