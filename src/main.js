@@ -47,7 +47,11 @@ async function loadProject(slug, { updateUrl = true } = {}) {
   if (updateUrl) setUrlProject(project.slug);
   setLoading(true);
   hideError();
-  currentDestroy?.();
+  try {
+    currentDestroy?.();
+  } catch (destroyError) {
+    console.error('销毁当前工程时发生错误：', destroyError);
+  }
   currentDestroy = null;
   host.replaceChildren();
   currentProject = project;

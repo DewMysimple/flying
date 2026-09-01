@@ -102,6 +102,7 @@ let rebuildArtwork = () => {};
 let rebuildGrain = () => {};
 let repositionArtwork = () => {};
 let redrawArtwork = () => {};
+let cleanupArtwork = () => {};
 
 const formatters = {
   birdCount: (value) => String(Math.round(value)),
@@ -267,7 +268,8 @@ const sketch = (p) => {
   }
 
   function buildGrain() {
-    grains = p.createGraphics(Math.max(1, p.width), Math.max(1, p.height));
+    if (grains) grains.resizeCanvas(Math.max(1, p.width), Math.max(1, p.height));
+    else grains = p.createGraphics(Math.max(1, p.width), Math.max(1, p.height));
     grains.pixelDensity(1);
     grains.clear();
     grains.noStroke();
@@ -404,12 +406,13 @@ const sketch = (p) => {
     reset();
   };
   reduceMotionMedia.addEventListener('change', onReduceMotionChange);
+  cleanupArtwork = () => reduceMotionMedia.removeEventListener('change', onReduceMotionChange);
 
   };
   const instance = new p5(sketch, canvasHost);
 
   return () => {
-    reduceMotionMedia.removeEventListener('change', onReduceMotionChange);
+    cleanupArtwork();
     instance.remove();
     root.remove();
   };
