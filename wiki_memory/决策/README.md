@@ -3,7 +3,7 @@ type: knowledge
 status: active
 kind: architecture
 importance: high
-updated: 2026-08-21
+updated: 2026-09-02
 topic: decisions-index
 source_logs: []
 supersedes: null
@@ -32,3 +32,4 @@ supersedes: null
 - [[决策/ADR-004-adaptive-workspace-theme|ADR-004：工程主题令牌驱动宿主顶栏]]
 - [[决策/ADR-005-sidebar-project-directory|ADR-005：左侧目录式工程导航]]
 - [[决策/ADR-006-parallel-dev-servers|ADR-006：允许并行开发服务器]]
+- [[决策/ADR-007-cuckoo-blood-flowers-narrative|ADR-007：杜鹃啼血采用可寻址三幕叙事]]
