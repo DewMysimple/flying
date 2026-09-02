@@ -20,6 +20,7 @@ supersedes: null
 | 2026-09-02 | feature | 新增以“望帝离世—化为杜鹃—啼血染花”为核心的桌面 p5.js 诗意动态叙事。 | archived | add-cuckoo-blood-flowers-project | [[日志/2026-09-02-新增杜鹃啼血工程.md|新增杜鹃啼血工程]] |
 | 2026-09-02 | operations | 解决旧 Vite 进程仍占用 `5189` 时，新的 `npm run dev` 无法启动的问题，并允许多个开发服务器并行运行。 | archived | parallel-dev-servers | [[日志/2026-09-02-并行开发服务器端口.md|2026-09-02｜并行开发服务器端口]] |
 | 2026-09-02 | ui | 参考用户提供的展开/收起侧栏，将宿主顶部工程切换器改为可识别的左侧工程目录。 | archived | sidebar-project-directory | [[日志/2026-09-02-左侧目录式工程导航.md|2026-09-02｜左侧目录式工程导航]] |
+| 2026-09-02 | bug | - | archived | fix-collapsed-sidebar-active-marker | [[日志/2026-09-02-修复收起侧栏高亮溢出.md|修复收起侧栏高亮溢出]] |
 | 2026-09-01 | maintenance | 解决执行 `npm run dev` 后因端口自动递增或打开旧端口而误连其他工程的问题。 | archived | fixed-dev-port | [[日志/2026-09-01-固定开发服务器端口.md|固定开发服务器端口]] |
 | 2026-09-01 | maintenance | 将飞鸟蒲公英整理为可扩展的多 p5.js 工程仓库，建立工程记忆，并准备推送到 `origin/main`。 | archived | initialize-multi-project-workspace | [[日志/2026-09-01-初始化多工程工作区.md|初始化多工程工作区]] |
 

@@ -418,7 +418,13 @@ button {
 }
 
 .workspace-sidebar.is-collapsed .project-option::before {
-  left: 1px;
+  /* Keep the active marker inside the 40px icon tile. The button itself is
+     48px wide, so placing the marker at 1px made it visibly bleed outside
+     the tile in the compact rail. */
+  left: 7px;
+  width: 2px;
+  height: 16px;
+  border-radius: 999px;
 }
 
 .workspace-feedback {
