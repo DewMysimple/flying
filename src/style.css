@@ -411,20 +411,43 @@ button {
   padding: 4px;
 }
 
+.workspace-sidebar.is-collapsed .project-option:hover,
+.workspace-sidebar.is-collapsed .project-option.is-current {
+  /* The icon tile is the only compact active surface; avoid a second
+     rounded background on the 48px button around it. */
+  background: transparent;
+}
+
 .workspace-sidebar.is-collapsed .project-option-mark {
+  position: relative;
   width: 40px;
   height: 40px;
   border-radius: 12px;
 }
 
 .workspace-sidebar.is-collapsed .project-option::before {
-  /* Keep the active marker inside the 40px icon tile. The button itself is
-     48px wide, so placing the marker at 1px made it visibly bleed outside
-     the tile in the compact rail. */
-  left: 7px;
-  width: 2px;
-  height: 16px;
+  display: none;
+}
+
+.workspace-sidebar.is-collapsed .project-option-mark::before {
+  position: absolute;
+  top: 50%;
+  left: 5px;
+  width: 3px;
+  height: 18px;
   border-radius: 999px;
+  background: var(--project-accent, var(--workspace-accent));
+  content: "";
+  opacity: 0;
+  transform: translateY(-50%) scaleY(0.7);
+  transition-property: opacity, transform;
+  transition-duration: 130ms;
+  transition-timing-function: ease-out;
+}
+
+.workspace-sidebar.is-collapsed .project-option.is-current .project-option-mark::before {
+  opacity: 1;
+  transform: translateY(-50%) scaleY(1);
 }
 
 .workspace-feedback {
